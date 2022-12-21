@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+	<head>
+	<meta charset="UTF-8">
+	<title>marrow</title>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css">
+	</head>
+
+	<body>
+		<script src="data.js"></script>
+		<h1>marrow</h1>
+		<div id="main"></div>
+		<br/>
+		<!-- <input type="file" id="posts" accept=".json">
+		<button id="load">load</button> -->
+		<canvas id="web"></canvas>
+		<br/>
+		<textarea id="message"></textarea>
+		<button id="send">send</button>
+		<script>
+			var canvasWidth = window.innerWidth*.8;
+			var canvasHeight = window.innerHeight*.8;
+			const ctx = document.getElementById("web").getContext("2d");
+			function setCanvasSize() {
+						ctx.canvas.width  = canvasWidth;
+  						ctx.canvas.height = canvasHeight;
+			}
+
+			setCanvasSize();
+			var img = new Image()
+			img.src = '/images/testImage.jpg'
+			img.onload = function (e)
+			{
+				ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+			}
+		// var loadProfile = document.querySelector('#load');
+		// 		loadProfile.addEventListener('click', function() {
+		// 			var path = document.querySelector('#posts').value.slice(12);
+		// 			console.log(path);
+		// 			fetch(path)
+		// 				.then(response => response.json())
+		// 				.then(data => {
+		// 					document.querySelector("#main").innerText = data.sentence
+		// 				})
+
+		// 		})
+			fetch("sample.json")
+				.then(response => response.json())
+				.then(data => {
+					document.querySelector("#main").innerText = data.sentence
+				})
+				
+			function addMsg(msg) {
+				var msgHtml = `
+							<p>
+								${msg.author}
+							</p>
+							<p>
+								${new Date(msg.date).toLocaleString()}
+							</p>
+							<p>
+							${msg.content}
+							</p>
+
+				`
+				main.insertAdjacentHTML('beforeend', msgHtml);
+			}
+
+			var textX = 200;
+			var textY = 200;
+			var prevTextX = textX;
+			var prevTextY = textY;
+			var btn = document.querySelector('#send');
+        		btn.addEventListener('click', function() {
+					var txt = document.querySelector('textarea');
+					var msg = {
+						content: txt.value,
+						date: Date.now(),
+						author: 0
+					}
+					
+					console.log(txt.value);
+					//addMsg(msg);
+
+					function draw() {
+						const ctx = document.getElementById("web").getContext("2d");
+						ctx.fillStyle = "rgb(0, 0, 0, 1)";
+						ctx.font = "20px serif";
+
+						if(textX < 0) {
+							textX = -textX;
+						}
+
+						if(textY < 0) {
+							textY = -textY;
+						}
+
+						if(textX > canvasWidth) {
+							textX = canvasWidth/2;
+						}
+
+						if (textY > canvasHeight) {
+							textY = canvasHeight/2;
+						}
+
+
+
+
+						var DLX = textX + ctx.measureText(msg.content).actualBoundingBoxLeft;
+						var DLY = textY + ctx.measureText(msg.content).actualBoundingBoxDescent;
+						var ARX = DLX + ctx.measureText(msg.content).actualBoundingBoxLeft + ctx.measureText(msg.content).actualBoundingBoxRight;
+						var ARY = DLY - ctx.measureText(msg.content).actualBoundingBoxAscent - ctx.measureText(msg.content).actualBoundingBoxDescent;
+
+						ctx.fillText(msg.content, textX, textY);
+						console.log(ctx.measureText(msg.content));
+						var angle = Math.floor(Math.random() * 366);
+
+						var distance = Math.sqrt(Math.pow(ARX-DLX,2) + Math.pow(ARY-DLY,2));
+						console.log(distance);
+						ctx.fillStyle = "rgb(200, 0, 0, 0.5)";
+          				ctx.fillRect(DLX, DLY, ARX-DLX, ARY-DLY);
+							
+							if (textX != prevTextX && textY != prevTextY)
+								{
+									ctx.beginPath();
+									ctx.moveTo(textX,textY);
+									ctx.lineTo(prevTextX, prevTextY);
+									ctx.stroke();
+								}
+						  	prevTextX = textX;
+							prevTextY = textY;
+							textX = textX + distance * 2 * Math.cos(angle * Math.PI / 180);
+							textY = textY + distance * 2 * Math.sin(angle * Math.PI / 180);
+					
+					}
+					draw();
+
+					txt.value = '';
+            	messages.push(msg);
+            	localStorage.setItem('messages', JSON.stringify(messages));
+			
+
+				})
+		</script>
+		<style>
+			
+		</style>
+	</body>
+</html>

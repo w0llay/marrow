@@ -1,0 +1,25 @@
+ @charset "UTF-8";
+/* CSS Document */
+
+body {
+	background-color:#F7ECE4;
+	}
+h1 {
+	font:"Times New Roman";
+	color:black;
+	text-align: center;
+}
+canvas {
+	display: block;
+  	margin: 0 auto;
+	border: 1px solid black;
+}
+textarea {
+	width: 500px;
+	display: block;
+  	margin: 0 auto;
+}
+button {
+	display: block;
+  	margin: 0 auto;
+}
